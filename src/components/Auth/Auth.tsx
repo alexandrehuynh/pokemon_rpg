@@ -1,7 +1,6 @@
 import * as _React from 'react';
 import { useState } from 'react'; 
-import { useSignInWithGoogle } from 'react-firebase-hooks/auth';  // useCreateUserWithEmailAndPassword deleted
-import { signInWithPopup, FacebookAuthProvider, AuthError } from 'firebase/auth';
+import { useSignInWithGoogle, useSignInWithFacebook } from 'react-firebase-hooks/auth';  // useCreateUserWithEmailAndPassword deleted
 import {
     onAuthStateChanged,
     getAuth,
@@ -106,7 +105,7 @@ const GoogleButton = (_props: ButtonProps ) => {
                 setMessageType('success')
                 setOpen(true)
                 // going to use setTimeout to display messagae for a short period & then navigate elsewhere
-                setTimeout(() => {navigate('/shop')}, 2000) //setTimeout takes 2 arguments, the first is function, second is time
+                setTimeout(() => {navigate('/safarizone')}, 2000) //setTimeout takes 2 arguments, the first is function, second is time
             }
         })
 
@@ -127,7 +126,7 @@ const GoogleButton = (_props: ButtonProps ) => {
             <Button
                 variant = 'contained'
                 color = 'info'
-                size = 'large'
+                size = 'medium'
                 sx = { authStyles.button }
                 onClick = { signIn }
             >
@@ -153,34 +152,47 @@ const FacebookButton: React.FC<ButtonProps> = (_props) => {
     const [messageType, setMessageType] = useState<MessageType>('info');
     const navigate = useNavigate();
     const auth = getAuth();
+    const [signInWithFacebook, user, loading, error] = useSignInWithFacebook(auth);
+
 
     const signIn = async () => {
-        const provider = new FacebookAuthProvider();
-        try {
-            await signInWithPopup(auth, provider);
-            // Previously: const result = await signInWithPopup(auth, provider);
-            // Since `result` isn't used, the above line is simplified to await the promise without assigning its result to a variable.
-    
-            // Assuming user handling or token extraction logic will go here
-            // For example, setting user state, navigating, or storing tokens.
-    
-            navigate('/shop');
-        } catch (error) {
-            if (error instanceof Error && 'code' in error) {
-                const firebaseError = error as AuthError;
-                setMessage(firebaseError.message);
-                setMessageType('error');
-                setOpen(true);
+        await signInWithFacebook() //call this function which pulls up a Google Dialogue box so you 
+                                //can select your google user & it will sign you in with that user
+
+        // going to use local storage which is essentially temporary storage
+        localStorage.setItem('auth', 'true') //key/value pairs in string format 
+        onAuthStateChanged(auth, (user) => {
+
+            if (user) {
+                localStorage.setItem('user', user.email || "") //use this on our navbar to show who is currently logged in
+                localStorage.setItem('uuid', user.uid || "") //use this for our cart to make them unique for our users & for our orders
+                setMessage(`Successfully logged in ${user.email}`)
+                setMessageType('success')
+                setOpen(true)
+                // going to use setTimeout to display messagae for a short period & then navigate elsewhere
+                setTimeout(() => {navigate('/safarizone')}, 2000) //setTimeout takes 2 arguments, the first is function, second is time
             }
+        })
+
+        if (error) {
+            setMessage(error.message)
+            setMessageType('error')
+            setOpen(true)
         }
-    };
+
+        if (loading) {
+            return <CircularProgress />
+        }
+
+    }
 
     return (
         <Box>
             <Button
                 variant='contained'
                 color='info'
-                size='large'
+                size='medium'
+                sx = { authStyles.button }
                 onClick={ signIn }
             >
                 Sign In With 
@@ -227,7 +239,7 @@ const SignIn = () => {
                     setMessageType('success')
                     setOpen(true)
                     // going to use setTimeout to display messagae for a short period & then navigate elsewhere
-                    setTimeout(() => {navigate('/shop')}, 2000) //setTimeout takes 2 arguments, the first is function, second is time
+                    setTimeout(() => {navigate('/safarizone')}, 2000) //setTimeout takes 2 arguments, the first is function, second is time
                 }
             } )
         })
@@ -298,7 +310,7 @@ const SignUp = () => {
                     setMessageType('success')
                     setOpen(true)
                     // going to use setTimeout to display messagae for a short period & then navigate elsewhere
-                    setTimeout(() => {navigate('/shop')}, 2000) //setTimeout takes 2 arguments, the first is function, second is time
+                    setTimeout(() => {navigate('/safarizone')}, 2000) //setTimeout takes 2 arguments, the first is function, second is time
                 }
             } )
         })
@@ -322,7 +334,7 @@ const SignUp = () => {
                     <InputPassword {...register('password')} name='password' placeholder='Password must be 6 characters or longer' />
                 </Box>
                 < IconButton aria-label="fingerprint" color="success" size="large" type='submit'>
-                    <Fingerprint /> 
+                <Fingerprint />
                 </IconButton>
                 <Typography variant="subtitle2" sx={{ textAlign: 'right' }}>
                     *Identification Required

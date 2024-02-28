@@ -23,7 +23,7 @@ const Main = styled('main')({
     height: '100%',
     backgroundSize: 'cover',
     backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center bottom -80px', 
+    backgroundPosition: 'center bottom -81px', 
     position: 'absolute',
     marginTop: '10px'
 })
