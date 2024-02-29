@@ -100,7 +100,7 @@ const GoogleButton = (_props: ButtonProps ) => {
 
             if (user) {
                 localStorage.setItem('user', user.email || "") //use this on our navbar to show who is currently logged in
-                localStorage.setItem('uuid', user.uid || "") //use this for our cart to make them unique for our users & for our orders
+                localStorage.setItem('uuid', user.uid || "") //use this for our pokemon to make them unique for our users & for our orders
                 setMessage(`Successfully logged in ${user.email}`)
                 setMessageType('success')
                 setOpen(true)
@@ -165,7 +165,7 @@ const FacebookButton: React.FC<ButtonProps> = (_props) => {
 
             if (user) {
                 localStorage.setItem('user', user.email || "") //use this on our navbar to show who is currently logged in
-                localStorage.setItem('uuid', user.uid || "") //use this for our cart to make them unique for our users & for our orders
+                localStorage.setItem('uuid', user.uid || "") //use this for our pokemon to make them unique for our users & for our orders
                 setMessage(`Successfully logged in ${user.email}`)
                 setMessageType('success')
                 setOpen(true)
@@ -234,7 +234,7 @@ const SignIn = () => {
             onAuthStateChanged(auth, (user) => {
                 if (user) {
                     localStorage.setItem('user', user.email || "") //use this on our navbar to show who is currently logged in
-                    localStorage.setItem('uuid', user.uid || "") //use this for our cart to make them unique for our users & for our orders
+                    localStorage.setItem('uuid', user.uid || "") //use this for our pokemon to make them unique for our users & for our orders
                     setMessage(`Successfully logged in ${user.email}`)
                     setMessageType('success')
                     setOpen(true)
@@ -305,7 +305,7 @@ const SignUp = () => {
             onAuthStateChanged(auth, (user) => {
                 if (user) {
                     localStorage.setItem('user', user.email || "") //use this on our navbar to show who is currently logged in
-                    localStorage.setItem('uuid', user.uid || "") //use this for our cart to make them unique for our users & for our orders
+                    localStorage.setItem('uuid', user.uid || "") //use this for our pokemon to make them unique for our users & for our orders
                     setMessage(`Successfully logged in ${user.email}`)
                     setMessageType('success')
                     setOpen(true)

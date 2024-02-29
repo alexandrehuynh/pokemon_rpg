@@ -20,6 +20,7 @@ export interface SafariZoneProps {
     abilities: string;
     date_added: string;
     user_id?: string;
+    favorite?: boolean;
 }
 
 
