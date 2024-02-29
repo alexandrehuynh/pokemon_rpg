@@ -30,24 +30,39 @@ export const EditPokemonDialog: React.FC<EditPokemonDialogProps> = ({
   const handleSpriteTypeChange = (event: SelectChangeEvent<'default' | 'shiny'>) => {
     const newSpriteType = event.target.value as 'default' | 'shiny';
     setSpriteType(newSpriteType);
-
-    // Construct the new image URL based on the selection
+  
     if (pokemon) {
-      const baseImageUrl = pokemon.image_url.split('/').slice(0, -1).join('/'); // Remove the last segment (shiny or not)
-      const newImageUrl = `${baseImageUrl}/${newSpriteType === 'shiny' ? 'shiny' : 'default'}.png`;
+      let newImageUrl = pokemon.image_url;
+      const baseUrl = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/';
+      const pokemonId = pokemon.image_url.split('/').pop(); // Get the Pokémon ID from the URL
+  
+      if (newSpriteType === 'shiny') {
+        // If the new type is shiny, add /shiny/ to the URL if it's not already there
+        if (!newImageUrl.includes('/shiny/')) {
+          newImageUrl = `${baseUrl}shiny/${pokemonId}`;
+        }
+      } else {
+        // If the new type is default, remove /shiny/ from the URL if it's there
+        newImageUrl = newImageUrl.replace('/shiny/', '/');
+      }
+  
       setImageUrl(newImageUrl);
     }
   };
 
+
   const handleSave = () => {
+    console.log('About to save, pokemon:', pokemon); // Log the pokemon before saving
     if (pokemon) {
       const updatedPokemon: SafariZoneProps = {
         ...pokemon,
-        image_url: imageUrl,
+        image_url: imageUrl, // Assuming image_url is the only property being updated
       };
+      console.log('Saving with firebaseKey:', updatedPokemon.firebaseKey); // Confirm the firebaseKey is present
       onSave(updatedPokemon);
     }
   };
+  
 
   return (
     <Dialog open={open} onClose={onClose}>
@@ -71,7 +86,7 @@ export const EditPokemonDialog: React.FC<EditPokemonDialogProps> = ({
           onChange={(event) => setImageUrl(event.target.value)}
           // Removed the disabled attribute to allow manual URL editing if desired
         />
-        <Button onClick={handleSave} color="primary" variant="contained" sx={{ marginTop: '20px' }}>
+        <Button onClick={handleSave} type = "button" color="primary" variant="contained" sx={{ marginTop: '20px' }}>
           Save Changes
         </Button>
       </DialogContent>

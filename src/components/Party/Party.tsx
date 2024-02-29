@@ -41,18 +41,39 @@ export const Party = () => {
     const [currentTeam, setCurrentTeam] = useState<SafariZoneProps[]>([]);
     const [editDialogOpen, setEditDialogOpen] = useState(false);
     const [selectedPokemon, setSelectedPokemon] = useState<SafariZoneProps | null>(null);
-    
+    const teamRef = ref(db, `teams/${userId}/`); 
+
   
-    useEffect(() => {
-      const teamRef = ref(db, `teams/${userId}/`); 
-      const unsubscribe = onValue(teamRef, (snapshot) => {
-        const data = snapshot.val();
-        const teamList = data ? Object.values(data) as SafariZoneProps[] : [];
-        setCurrentTeam(teamList);
-      });
-  
-      return () => unsubscribe();
-    }, [userId, db]);
+
+    // useEffect to monitor changes to our team in our database
+    // takes in 2 arguments, 1st is function to run, 2nd is variable we are monitoring 
+    useEffect(()=> {
+
+
+      // onValue() is listening for changes on team
+      onValue(teamRef, (snapshot) => {
+          const data = snapshot.val() //grabbing our team data from the database
+
+          // whats coming back from the database is essentially a dictionary/object
+          // we want our ddata to be a list of objects so we can forloop/map over them
+          let teamList = []
+
+          if (data){
+              for (let [key, value] of Object.entries(data)){
+                  let teamItem = value as SafariZoneProps
+                  teamItem['firebaseKey'] = key
+                  teamList.push(teamItem)
+              }
+          }
+
+          setCurrentTeam(teamList as SafariZoneProps[])
+      })
+
+      // using the off to detach the listener (aka its basically refreshing the listener)
+      return () => {
+          off(teamRef)
+      }
+  },[]);
   
     const handleEditClick = (pokemon: SafariZoneProps) => {
       setSelectedPokemon(pokemon);
@@ -60,14 +81,19 @@ export const Party = () => {
     };
   
     const handleSaveChanges = async (updatedPokemon: SafariZoneProps) => {
-      if (!updatedPokemon.firebaseKey) return; // Ensure there's a firebaseKey to work with
-    
+      console.log('handleSaveChanges called with:', updatedPokemon); // This should include firebaseKey
+      if (!updatedPokemon.firebaseKey) {
+        console.log('No firebaseKey present, returning early.');
+        return; // If this is logged, you have an issue with the firebaseKey being passed down
+      }  
       const itemRef = ref(db, `teams/${userId}/${updatedPokemon.firebaseKey}`);
+      console.log('itemRef:', itemRef)
       try {
         const updateData = { ...updatedPokemon };
         delete updateData.firebaseKey; // Remove firebaseKey from the update data
     
         await update(itemRef, updateData);
+        console.log('update being called with:', itemRef, 'and', updateData);
         // Fetch updated list of Pokémon
         fetchUpdatedTeam();
         setMessage('Successfully Updated Your Team');
@@ -85,7 +111,6 @@ export const Party = () => {
     
     
     const fetchUpdatedTeam = () => {
-      const teamRef = ref(db, `teams/${userId}/`);
       onValue(teamRef, (snapshot) => {
         const data = snapshot.val();
         const teamList = data ? Object.entries(data).map(([key, value]) => ({
@@ -101,7 +126,6 @@ export const Party = () => {
   // function to release Pokemon from our Team
   const releasePokemon = async (teamItem: SafariZoneProps) => {
     // You need to find the unique key for the Pokémon to be deleted
-    const teamRef = ref(db, `teams/${userId}/`);
     onValue(teamRef, (snapshot) => {
         snapshot.forEach((childSnapshot) => {
             const childKey = childSnapshot.key;
