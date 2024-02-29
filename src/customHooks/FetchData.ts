@@ -20,7 +20,11 @@ export interface SafariZoneProps {
     abilities: string;
     date_added: string;
     user_id?: string;
-    favorite?: boolean;
+    sprites?: {
+        front_default?: string;
+        front_shiny?: string;
+    };
+    firebaseKey?: string;
 }
 
 

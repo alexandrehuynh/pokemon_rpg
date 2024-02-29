@@ -7,7 +7,7 @@ import 'firebase/auth';
 
 
 // internal imports 
-import { Home, SafariZone, Pokemon, Auth} from './components'; 
+import { Home, SafariZone, Party, Auth} from './components'; 
 import './index.css'
 import { theme } from './Theme/themes';
 import { firebaseConfig } from './firebaseConfig'; 
@@ -21,7 +21,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Route path='/' element={<Home title = {"Ranger's Safari Zone"}/>} />
             <Route path='/auth' element={<Auth title = {"Ranger's Regristration"}/>} />
             <Route path='/safarizone' element={<SafariZone />} />
-            <Route path='/pokemon' element={<Pokemon />} />
+            <Route path='/party' element={<Party />} />
           </Routes>
         </Router>
       </ThemeProvider>

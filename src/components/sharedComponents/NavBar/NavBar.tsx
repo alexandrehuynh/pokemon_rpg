@@ -116,9 +116,9 @@ export const NavBar = () => {
             onClick: () => navigate(myAuth === 'true' ? '/safarizone' : '/auth') 
         },
         { 
-            text: myAuth === 'true' ? 'Pokemon' : '',
+            text: myAuth === 'true' ? 'Party' : '',
             icon: myAuth === 'true' ? <Groups3Icon /> : "",
-            onClick: myAuth === 'true' ? () => navigate('/pokemon') : () => {} 
+            onClick: myAuth === 'true' ? () => navigate('/party') : () => {} 
         }
     ]
 
